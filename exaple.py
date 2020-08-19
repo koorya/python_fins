@@ -22,6 +22,8 @@ for i in range(2):
     time.sleep(1)
 """
 state = b'\x00\x01\x00'
+ff_bit = b'\x00\x64\x04'
+fn_bit = b'\x00\x64\x05'
 
 # если 10, то 11. Если 15, то 16
 if 1 == int(input("reset. 1 - yes, 0 - no\n")):
@@ -37,10 +39,18 @@ while pc != 0 and pc != 18 :
 
     if cur_state == 10 :
         print("Level")
-        pc = int(input("enter command. 1 - next, 0 - exit\n"))
+        pc = int(input("enter command. 1 - next, 4 - focus far, 5 - focus near, 0 - exit\n"))
         if pc == 1 :
             pc = 11
             fins_instance.memory_area_write(fins.FinsPLCMemoryAreas().WORK_WORD, state, pc.to_bytes(2, 'big'), 1)
+        if pc == 4 :
+            fins_instance.memory_area_write(fins.FinsPLCMemoryAreas().CIO_BIT,ff_bit,b'\x01',1)
+            time.sleep(3)
+            fins_instance.memory_area_write(fins.FinsPLCMemoryAreas().CIO_BIT,ff_bit,b'\x00',1)
+        if pc == 5 :
+            fins_instance.memory_area_write(fins.FinsPLCMemoryAreas().CIO_BIT,fn_bit,b'\x01',1)
+            time.sleep(3)
+            fins_instance.memory_area_write(fins.FinsPLCMemoryAreas().CIO_BIT,fn_bit,b'\x00',1)
 
     if cur_state == 15 :
         print("Level")
